@@ -55,13 +55,13 @@ module fftcontroller(input  logic        clk, reset, data,
 
     // Declare FFT signals
     logic               start, loadwrite;
-    logic signed [15:0] datar, datai, gr, gi, hr, hi;
-    logic        [5:0]  count;
     logic        [4:0]  loadadr, maxadr, adr;
+    logic        [5:0]  count;
+    logic signed [15:0] datar, datai, gr, gi, hr, hi;
     
     // Count up to 32 samples
     always_ff @ (posedge clk, posedge reset)
-        if (reset)           count <= 0;
+        if      (reset)      count <= 0;
         else if (done)       count <= 0;
         else if (count < 33) count <= count + 1;    
          
@@ -84,8 +84,8 @@ module fftcontroller(input  logic        clk, reset, data,
               
     // Maximum frequency bin register
     always_ff @ (posedge clk, posedge reset)
-        if (reset)     adr <= 4'd0;
-        else if (done) adr <= maxadr;
+        if      (reset) adr <= 4'd0;
+        else if (done)  adr <= maxadr;
          
     // Decode frequency into one-hot encoding for LEDs
     decoder dec(adr, leds);
@@ -144,16 +144,16 @@ module fft(input  logic               clk, reset, start, loadwrite,
     twiddle twid(twiddleAdr, wre, wim);
     
     // Butterfly Unit
-    bfu bfu(clk, gr, gi, hr, hi, wre, wim, Are, Aim, Bre, Bim);
+    bfu bfu(gr, gi, hr, hi, wre, wim, Are, Aim, Bre, Bim);
      
-     // On the last cycle of FFT, clear memory bank for next FFT calculation
-     assign memAre = peaken ? 16'd0 : Are;
-     assign memAim = peaken ? 16'd0 : Aim;
-     assign memBre = peaken ? 16'd0 : Bre;
-     assign memBim = peaken ? 16'd0 : Bim;
-     
-     // Calculate the most likely frequency bin
-     peakfind peak(clk, reset, peaken, clear, adra, Are, Aim, maxadr);
+    // On the last cycle of FFT, clear memory bank for next FFT calculation
+    assign memAre = peaken ? 16'd0 : Are;
+    assign memAim = peaken ? 16'd0 : Aim;
+    assign memBre = peaken ? 16'd0 : Bre;
+    assign memBim = peaken ? 16'd0 : Bim;
+
+    // Calculate the most likely frequency bin
+    peakfind peak(clk, reset, peaken, clear, adra, Are, Aim, maxadr);
     
 endmodule
 
@@ -172,8 +172,7 @@ endmodule
 // 
 ///////////////////////////////////////////////////////////
 
-module bfu(input  logic               clk,
-           input  logic signed [15:0] are, aim, bre, bim, wre, wim,
+module bfu(input  logic signed [15:0] are, aim, bre, bim, wre, wim,
            output logic signed [15:0] Are, Aim, Bre, Bim);
               
     // Temporary multiplication results
@@ -243,10 +242,10 @@ module mem(input  logic               clk, loadwrite, bank0write, bank1write, ba
            input  logic signed [15:0] datar, datai, xr, xi, yr, yi,
            output logic signed [15:0] gr, gi, hr, hi); 
 
-     // Declare addresses, data, and write signals
+    // Declare addresses, data, and write signals
+    logic               bank0awrite, bank1awrite;
     logic        [4:0]  adra0, adra1, adrb0, adrb1, flippedadr;
     logic signed [15:0] datainr, dataini, g0r, g0i, g1r, g1i, h0r, h0i, h1r, h1i;
-    logic               bank0awrite, bank1awrite;
 
     // Write to Bank0A if loading data, or if writing to that block directly
     assign bank0awrite = loadwrite | bank0write;
@@ -313,7 +312,7 @@ module ram(input  logic               clk,
            output logic signed [15:0] q_a, q_b);
     
     // Declare the RAM variable
-    logic [15:0] ram[0:31];
+    logic [15:0] ram [0:31];
     
     // Port A
     always @ (posedge clk) begin
