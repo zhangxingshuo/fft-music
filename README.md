@@ -1,2 +1,2 @@
-# fft-music
-Implements hardware Fast Fourier Transform on an FPGA, reading music output from a Raspberry Pi
+# c-speaker
+C program to play a specified frequency through a Raspberry Pi
