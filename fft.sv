@@ -600,65 +600,65 @@ module whichButtonPressed(input  logic [3:0] R,
                           output logic [3:0] C,
                           output logic [4:0] numberPressed);
         
-        logic [3:0] state, nextstate;
-        
-        assign C = state;
-        
-        logic [7:0] tracked, ntracked;
-        
-        always_ff @ (posedge clk, posedge reset)
-            if (reset) begin 
-                state   <= 4'b0000; 
-                tracked <= 8'd0; 
-            end 
-            else begin 
-                state   <= nextstate; 
-                tracked <= ntracked; 
-            end
-        
-        always_comb
-            case(state)
-                4'b0000: nextstate = 4'b0001;
-                4'b0001: nextstate = 4'b0010;
-                4'b0010: nextstate = 4'b0100;
-                4'b0100: nextstate = 4'b1000;
-                4'b1000: nextstate = 4'b0000;
-                default: nextstate = 4'b0000;
-            endcase
+    logic [3:0] state, nextstate;
+    
+    assign C = state;
+    
+    logic [7:0] tracked, ntracked;
+    
+    always_ff @ (posedge clk, posedge reset)
+        if (reset) begin 
+            state   <= 4'b0000; 
+            tracked <= 8'd0; 
+        end 
+        else begin 
+            state   <= nextstate; 
+            tracked <= ntracked; 
+        end
+    
+    always_comb
+        case(state)
+            4'b0000: nextstate = 4'b0001;
+            4'b0001: nextstate = 4'b0010;
+            4'b0010: nextstate = 4'b0100;
+            4'b0100: nextstate = 4'b1000;
+            4'b1000: nextstate = 4'b0000;
+            default: nextstate = 4'b0000;
+        endcase
 
-        always_comb
-            case(state)
-                4'b0001: if(|R)    ntracked = {R, C};
-                         else      ntracked = tracked; 
-                4'b0010: if(|R)    ntracked = {R, C};
-                         else      ntracked = tracked;
-                4'b0100: if(|R)    ntracked = {R, C}; 
-                         else      ntracked = tracked; 
-                4'b1000: if(|R)    ntracked = {R, C};
-                         else      ntracked = tracked;
-                default:           ntracked = tracked;
-            endcase
-        
-        always_comb
-            case(ntracked)
-                8'b10000010: numberPressed = 5'd0;
-                8'b00010001: numberPressed = 5'd1;
-                8'b00010010: numberPressed = 5'd2;
-                8'b00010100: numberPressed = 5'd3;
-                8'b00100001: numberPressed = 5'd4;
-                8'b00100010: numberPressed = 5'd5;
-                8'b00100100: numberPressed = 5'd6;
-                8'b01000001: numberPressed = 5'd7;
-                8'b01000010: numberPressed = 5'd8;
-                8'b01000100: numberPressed = 5'd9;
-                8'b00011000: numberPressed = 5'd10;
-                8'b00101000: numberPressed = 5'd11;
-                8'b01001000: numberPressed = 5'd12;
-                8'b10001000: numberPressed = 5'd13;
-                8'b10000001: numberPressed = 5'd14;
-                8'b10000100: numberPressed = 5'd15;
-                default:     numberPressed = 5'd0;
-            endcase
+    always_comb
+        case(state)
+            4'b0001: if(|R)    ntracked = {R, C};
+                     else      ntracked = tracked; 
+            4'b0010: if(|R)    ntracked = {R, C};
+                     else      ntracked = tracked;
+            4'b0100: if(|R)    ntracked = {R, C}; 
+                     else      ntracked = tracked; 
+            4'b1000: if(|R)    ntracked = {R, C};
+                     else      ntracked = tracked;
+            default:           ntracked = tracked;
+        endcase
+    
+    always_comb
+        case(ntracked)
+            8'b10000010: numberPressed = 5'd0;
+            8'b00010001: numberPressed = 5'd1;
+            8'b00010010: numberPressed = 5'd2;
+            8'b00010100: numberPressed = 5'd3;
+            8'b00100001: numberPressed = 5'd4;
+            8'b00100010: numberPressed = 5'd5;
+            8'b00100100: numberPressed = 5'd6;
+            8'b01000001: numberPressed = 5'd7;
+            8'b01000010: numberPressed = 5'd8;
+            8'b01000100: numberPressed = 5'd9;
+            8'b00011000: numberPressed = 5'd10;
+            8'b00101000: numberPressed = 5'd11;
+            8'b01001000: numberPressed = 5'd12;
+            8'b10001000: numberPressed = 5'd13;
+            8'b10000001: numberPressed = 5'd14;
+            8'b10000100: numberPressed = 5'd15;
+            default:     numberPressed = 5'd0;
+        endcase
     
 endmodule       
 
