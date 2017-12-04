@@ -56,6 +56,13 @@ enum pitch {
     sC5 = 1109,
     fD5 = 1109,
     D5 = 1175,
+    sD5 = 1244,
+    fE5 = 1244,
+    E5 = 1318,
+    F5 = 1397,
+    sF5 = 1480,
+    fG5 = 1480,
+    G5 = 1568,
     R = 0      // rest
 };
 typedef enum pitch pitch_t;

@@ -41,6 +41,7 @@
 // Contains the music data to be played
 #include "bach.h"
 #include "canon.h"
+#include "sleigh.h"
 
 // Plays a single note at a given frequency for
 // a given duration
@@ -76,7 +77,7 @@ void playChord(int freq1, int freq2, int freq3) {
     playNote(freq3, 25);
 }
 
-note_t rest = {R, H};
+note_t rest = {R, W};
 
 int main(void) {
     // Initialize the Raspberry Pi for EasyPIO
@@ -121,14 +122,14 @@ int main(void) {
         note2 = &bach2[i2];
     }
     else if (in1) {
-    note0 = &canon0[i0];
+    	note0 = &canon0[i0];
         note1 = &canon1[i1];
         note2 = &canon2[i2];
     }
     else if (in2) {
-        note0 = &canon0[i0];
-        note1 = &canon1[i1];
-        note2 = &canon2[i2];
+        note0 = &sleigh0[i0];
+        note1 = &sleigh1[i1];
+        note2 = &sleigh2[i2];
     }
 
     // Initialize running average
@@ -146,7 +147,8 @@ int main(void) {
     printf("Playing...\n");
 
     // Continue playing until all notes read DONE
-    while ((copy0.d != DONE) || (copy1.d != DONE) || (copy2.d != DONE)) {
+    //while ((copy0.d != DONE) || (copy1.d != DONE) || (copy2.d != DONE)) {
+    while (1) {
 
         int freq0 = copy0.p;
         int dur0 = copy0.d;
@@ -173,7 +175,7 @@ int main(void) {
         }
 
         // Transform average to a PWM duty cycle
-        pwm_duty = (-0.08 * running_dur + 95.0) * 10000;
+        pwm_duty = (-0.0457 * running_dur + 70.7) * 10000;
         gpioHardwarePWM(18, 120, pwm_duty);
 
         printf("Note 0: %d, %d, %d\n", i0, freq0, dur0);
@@ -182,8 +184,8 @@ int main(void) {
         // printf("%f\n", pwm_duty);
         playChord(freq0, freq1, freq2);
 
-        // Advance if duration is 0
-        if (dur0 == 0) {
+        // Advance if duration is 25
+        if (dur0 == 25) {
             i0++;
             if (i0 == 1) {
                 if (in0) {
@@ -193,7 +195,7 @@ int main(void) {
                     num1 = canon0[i0].d;
                 }
                 else if (in2) {
-                    num1 = canon0[i0].d;
+                    num1 = sleigh0[i0].d;
                 }
             }
             else if (i0 == 2) {
@@ -204,7 +206,7 @@ int main(void) {
                     num2 = canon0[i0].d;
                 }
                 else if (in2) {
-                    num2 = canon0[i0].d;
+                    num2 = sleigh0[i0].d;
                 }
             }
             else {
@@ -217,7 +219,7 @@ int main(void) {
                     num2 = canon0[i0].d;
                 }
                 else if (in2) {
-                    num2 = canon0[i0].d;
+                    num2 = sleigh0[i0].d;
                 }
             }
 
@@ -228,7 +230,7 @@ int main(void) {
                 note0 = &canon0[i0];
             }
             else if (in2) {
-                note0 = &canon0[i0];
+                note0 = &sleigh0[i0];
             }
             else {
                 i0 = 0;
@@ -238,7 +240,7 @@ int main(void) {
             copy0.d = note0->d;
         }
 
-        if (dur1 == 0) {
+        if (dur1 == 25) {
             i1++;
             if (in0) {
                 note1 = &bach1[i1];
@@ -247,7 +249,7 @@ int main(void) {
                 note1 = &canon1[i1];
             }
             else if (in2) {
-                note1 = &canon1[i1];
+                note1 = &sleigh1[i1];
             }
             else {
                 i1 = 0;
@@ -256,7 +258,7 @@ int main(void) {
             copy1.p = note1->p;
             copy1.d = note1->d;
         }
-        if (dur2 == 0) {
+        if (dur2 == 25) {
             i2++;
             if (in0) {
                 note2 = &bach2[i2];        
@@ -265,7 +267,7 @@ int main(void) {
                 note2 = &canon2[i2];
             }
             else if (in2) {
-                note2 = &canon2[i2];
+                note2 = &sleigh2[i2];
             }
             else {
                 i2 = 0;
@@ -282,13 +284,11 @@ int main(void) {
 
         // If input has changed
         if ((in0 != newin0) || (in1 != newin1) || (in2 != newin2)) {
-            printf("changed!\n");
             i0 = 0;
             i1 = 0;
             i2 = 0;
 
             if (newin0) {
-                printf("0\n");
                 note0 = &bach0[i0];
                 note1 = &bach1[i1];
                 note2 = &bach2[i2];
@@ -299,9 +299,9 @@ int main(void) {
                 note2 = &canon2[i2];
             }
             else if (newin2) {
-                note0 = &canon0[i0];
-                note1 = &canon1[i1];
-                note2 = &canon2[i2];
+                note0 = &sleigh0[i0];
+                note1 = &sleigh1[i1];
+                note2 = &sleigh2[i2];
             }
             else {
                 note0 = &rest;
