@@ -42,6 +42,8 @@
 #include "bach.h"
 #include "canon.h"
 #include "sleigh.h"
+#include "pirate.h"
+#include "test.h"
 
 // Plays a single note at a given frequency for
 // a given duration
@@ -97,15 +99,21 @@ int main(void) {
     myPinMode(17, INPUT);
     myPinMode(27, INPUT);
     myPinMode(22, INPUT);
+    myPinMode(5, INPUT);
+    myPinMode(6, INPUT);
 
     // Wait for input
     int in0 = 0;
     int in1 = 0;
     int in2 = 0;
-    while (!in0 && !in1 && !in2) {
+    int in3 = 0;
+    int in4 = 0;
+    while (!in0 && !in1 && !in2 && !in3 && !in4) {
         in0 = myDigitalRead(17);
         in1 = myDigitalRead(27);
         in2 = myDigitalRead(22);
+        in3 = myDigitalRead(5);
+        in4 = myDigitalRead(6);
     }
 
     // Initialize our counters to the arrays
@@ -131,6 +139,16 @@ int main(void) {
         note1 = &sleigh1[i1];
         note2 = &sleigh2[i2];
     }
+    else if (in3) {
+        note0 = &pirate0[i0];
+        note1 = &pirate1[i1];
+        note2 = &pirate2[i2];
+    }
+    else if (in4) {
+        note0 = &test0[i0];
+        note1 = &test1[i1];
+        note2 = &test2[i2];
+    }
 
     // Initialize running average
     int num0 = note0->d;
@@ -147,7 +165,6 @@ int main(void) {
     printf("Playing...\n");
 
     // Continue playing until all notes read DONE
-    //while ((copy0.d != DONE) || (copy1.d != DONE) || (copy2.d != DONE)) {
     while (1) {
 
         int freq0 = copy0.p;
@@ -175,7 +192,7 @@ int main(void) {
         }
 
         // Transform average to a PWM duty cycle
-        pwm_duty = (-0.0457 * running_dur + 70.7) * 10000;
+        pwm_duty = (-0.04 * running_dur + 105) * 10000;
         gpioHardwarePWM(18, 120, pwm_duty);
 
         printf("Note 0: %d, %d, %d\n", i0, freq0, dur0);
@@ -197,6 +214,12 @@ int main(void) {
                 else if (in2) {
                     num1 = sleigh0[i0].d;
                 }
+                else if (in3) {
+		    num1 = pirate0[i0].d;
+                }
+                else if (in4) {
+		    num1 = test0[i0].d;
+                }
             }
             else if (i0 == 2) {
                 if (in0) {
@@ -207,6 +230,12 @@ int main(void) {
                 }
                 else if (in2) {
                     num2 = sleigh0[i0].d;
+                }
+		else if (in3) {
+		    num2 = pirate0[i0].d;
+                }
+                else if (in4) {
+		    num2 = test0[i0].d;
                 }
             }
             else {
@@ -221,6 +250,12 @@ int main(void) {
                 else if (in2) {
                     num2 = sleigh0[i0].d;
                 }
+		else if (in3) {
+		    num2 = pirate0[i0].d;
+                }
+                else if (in4) {
+		    num2 = test0[i0].d;
+                }
             }
 
             if (in0) {
@@ -231,6 +266,12 @@ int main(void) {
             }
             else if (in2) {
                 note0 = &sleigh0[i0];
+            }
+	    else if (in3) {
+		note0 = &pirate0[i0];
+	    }
+	    else if (in4) {
+		note0 = &test0[i0];
             }
             else {
                 i0 = 0;
@@ -251,6 +292,12 @@ int main(void) {
             else if (in2) {
                 note1 = &sleigh1[i1];
             }
+	    else if (in3) {
+		note1 = &pirate1[i1];
+	    }
+	    else if (in4) {
+		note1 = &test1[i1];
+            }
             else {
                 i1 = 0;
                 note1 = &rest;
@@ -269,6 +316,12 @@ int main(void) {
             else if (in2) {
                 note2 = &sleigh2[i2];
             }
+	    else if (in3) {
+		note2 = &pirate2[i2];
+	    }
+	    else if (in4) {
+		note2 = &test2[i2];
+            }
             else {
                 i2 = 0;
                 note2 = &rest;
@@ -281,9 +334,11 @@ int main(void) {
         int newin0 = myDigitalRead(17);
         int newin1 = myDigitalRead(27);
         int newin2 = myDigitalRead(22);
+        int newin3 = myDigitalRead(5);
+        int newin4 = myDigitalRead(6);
 
         // If input has changed
-        if ((in0 != newin0) || (in1 != newin1) || (in2 != newin2)) {
+        if ((in0 != newin0) || (in1 != newin1) || (in2 != newin2) || (in3 != newin3) || (in4 != newin4)) {
             i0 = 0;
             i1 = 0;
             i2 = 0;
@@ -303,6 +358,16 @@ int main(void) {
                 note1 = &sleigh1[i1];
                 note2 = &sleigh2[i2];
             }
+            else if (newin3) {
+		note0 = &pirate0[i0];
+                note1 = &pirate1[i1];
+                note2 = &pirate2[i2];
+	    }
+	    else if (newin4) {
+		note0 = &test0[i0];
+                note1 = &test1[i1];
+                note2 = &test2[i2];
+	    }
             else {
                 note0 = &rest;
                 note1 = &rest;
@@ -326,6 +391,8 @@ int main(void) {
         in0 = newin0;
         in1 = newin1;
         in2 = newin2;
+        in3 = newin3;
+        in4 = newin4;
     }
 
     // Play a silent chord

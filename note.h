@@ -69,10 +69,12 @@ typedef enum pitch pitch_t;
 
 // Define the duration of a note in ms
 enum dur {
-    E = 125,  // eighth
-    Q = 250,  // quarter
-    H = 500,  // half
-    W = 1000, // whole
+    T = 75,
+    S = 75,
+    E = 150,  // eighth
+    Q = 300,  // quarter
+    H = 600,  // half
+    W = 1200, // whole
     DONE = 42 // done
 };
 typedef enum dur dur_t;
