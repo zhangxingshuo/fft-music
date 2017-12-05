@@ -192,7 +192,7 @@ int main(void) {
         }
 
         // Transform average to a PWM duty cycle
-        pwm_duty = (-0.04 * running_dur + 105) * 10000;
+        pwm_duty = (-0.03111 * running_dur + 102.33) * 10000;
         gpioHardwarePWM(18, 120, pwm_duty);
 
         printf("Note 0: %d, %d, %d\n", i0, freq0, dur0);
